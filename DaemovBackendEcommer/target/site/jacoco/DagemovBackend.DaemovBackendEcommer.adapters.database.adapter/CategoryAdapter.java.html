@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CategoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DaemovBackendEcommer</a> &gt; <a href="index.source.html" class="el_package">DagemovBackend.DaemovBackendEcommer.adapters.database.adapter</a> &gt; <span class="el_source">CategoryAdapter.java</span></div><h1>CategoryAdapter.java</h1><pre class="source lang-java linenums">package DagemovBackend.DaemovBackendEcommer.adapters.database.adapter;
+
+import DagemovBackend.DaemovBackendEcommer.adapters.database.entity.CategoryEntity;
+import DagemovBackend.DaemovBackendEcommer.adapters.database.mapper.ICategoryMapperEntity;
+import DagemovBackend.DaemovBackendEcommer.adapters.database.repository.ICategoryRepository;
+import DagemovBackend.DaemovBackendEcommer.configuration.Constants;
+import DagemovBackend.DaemovBackendEcommer.domain.exception.EmptyFile;
+import DagemovBackend.DaemovBackendEcommer.domain.model.Category;
+import DagemovBackend.DaemovBackendEcommer.domain.spi.ICategoryPersistencePort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
+import java.util.Optional;
+
+public class CategoryAdapter implements ICategoryPersistencePort {
+    private final ICategoryRepository categoryRepository;
+    private final ICategoryMapperEntity categoryMapperEntity;
+
+<span class="fc" id="L21">    public CategoryAdapter(ICategoryRepository categoryRepository, ICategoryMapperEntity categoryMapperEntity) {</span>
+<span class="fc" id="L22">        this.categoryRepository = categoryRepository;</span>
+<span class="fc" id="L23">        this.categoryMapperEntity = categoryMapperEntity;</span>
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    public Category addCategory(Category category) {
+<span class="nc" id="L28">        categoryRepository.save(categoryMapperEntity.toCategoryEntity(category));</span>
+<span class="nc" id="L29">        return category;</span>
+    }
+
+    @Override
+    public Optional&lt;Category&gt; getCategoryById(Long id) {
+<span class="nc" id="L34">        Optional&lt;CategoryEntity&gt; categoryOptional= categoryRepository.findById(id);</span>
+<span class="nc" id="L35">        return categoryOptional.map(categoryMapperEntity::toCategoryModel);</span>
+    }
+
+    @Override
+    public Optional&lt;Category&gt; getCategoryByName(String name)
+    {
+<span class="nc" id="L41">        Optional&lt;CategoryEntity&gt; categoryOptional= categoryRepository.findByName(name);</span>
+<span class="nc" id="L42">        return categoryOptional.map(categoryMapperEntity::toCategoryModel);</span>
+    }
+
+    @Override
+    public Category updateCategory(Long id,Category category)
+    {
+<span class="nc" id="L48">        categoryRepository.save(categoryMapperEntity.toCategoryEntity(category));</span>
+<span class="nc" id="L49">        return category;</span>
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+
+<span class="nc" id="L55">        categoryRepository.deleteById(id);</span>
+<span class="nc" id="L56">    }</span>
+
+
+    @Override
+    public List&lt;Category&gt; getAllCategories(Integer page, Integer size, boolean orderAsc)
+    {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        Sort sort = orderAsc ? Sort.by(&quot;name&quot;).ascending() : Sort.by(&quot;name&quot;).descending();</span>
+<span class="nc" id="L63">        Pageable pageable = PageRequest.of(page,size,sort);</span>
+
+<span class="nc" id="L65">        List&lt;CategoryEntity&gt; categoriesEntity = categoryRepository.findAll(pageable).getContent();</span>
+<span class="nc" id="L66">        List&lt;Category&gt; categories = categoryMapperEntity.toCategoriesModel(categoriesEntity);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if(categories.isEmpty())</span>
+        {
+<span class="nc" id="L69">            throw new EmptyFile(Constants.NO_RECORD_FOUND);</span>
+        }
+<span class="nc" id="L71">        return categories;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
