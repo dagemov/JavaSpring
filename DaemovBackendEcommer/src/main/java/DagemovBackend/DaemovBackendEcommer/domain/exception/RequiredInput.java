@@ -4,8 +4,8 @@ public class RequiredInput extends RuntimeException{
     public RequiredInput(String message) {
         super(message);
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> feature/users
+
+
+
